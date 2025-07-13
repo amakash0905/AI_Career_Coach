@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EmptyState from './_components/EmptyState'; // ✅ correct path based on your file location
+import axios from 'axios';
 
 export default function AiChat() {
   const [message, setMessage] = useState('');
@@ -19,6 +20,17 @@ export default function AiChat() {
     setMessages([]);
     setMessage('');
   };
+
+  const [userInput, setUserInput]=useState<string>();
+  const[loading,setLoading]=useState(false);
+
+  const onSend=async()=>{
+      const result=await axios.post('/api/ai-career-chat-agent',{
+        userInput:userInput
+      });
+      console.log(result.data);
+      setLoading(false);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 md:px-16 lg:px-32 xl:px-48 py-10">
@@ -70,7 +82,8 @@ export default function AiChat() {
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           />
           <button
-            onClick={handleSend}
+            onClick={onSend}
+            disabled={loading}
             className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
           >
             <Send size={18} />
